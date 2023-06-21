@@ -19,12 +19,12 @@ namespace WpfApp1.Model
     {
         // выгрузка нужных данных из бд
 
-        public void TEST()
+        public void Table_date()
         {
-            DataTable dataTable = Select("SELECT * FROM [dbo].[result]");
+            DataTable dataTable = Select($"SELECT  t2.name,SUM(t2.span) as total FROM (SELECT u.name ,r1.span, CASE WHEN r1.iddevice <= 7 THEN 'холодная вода' ELSE 'горячая вода' END as Type_water FROM  result r1 JOIN device d ON r1.iddevice = d.id JOIN vvod v ON v.id = d.vvodid join usl u on v.uslid = u.id WHERE r1.datestart >= d.Datestart AND r1.DateEnd <= d.Dateend) as t2 GROUP BY t2.name, t2.Type_water");
             for (int i = 0; i < dataTable.Rows.Count; i++)// создаём таблицу в приложении
             {
-                MessageBox.Show(dataTable.Rows[i][0] + "|" + dataTable.Rows[i][1]);
+                MessageBox.Show("Услуга : " + dataTable.Rows[i][0] + " | Объём : " + dataTable.Rows[i][1]);
             }
         }
         public DataTable Select(string selectSQL) // функция подключения к базе данных и обработка запросов
@@ -161,8 +161,20 @@ namespace WpfApp1.Model
             try
             {
                 ApplicationContext context = new ApplicationContext();
-                string request_to_db = $"SELECT id,Name,Datestart,Dateend,Span FROM uslugi";
-
+                string request_to_db = $"SELECT  t2.name,SUM(t2.span) as total " +
+                    $"FROM (" +
+                    $"SELECT u.name ,r1.span, " +
+                    $"CASE " +
+                    $"WHEN r1.iddevice <= 7  " +
+                    $"THEN 'холодная вода' " +
+                    $"ELSE 'горячая вода' " +
+                    $"END as Type_water " +
+                    $"FROM  result r1 " +
+                    $"JOIN device d ON r1.iddevice = d.id " +
+                    $"JOIN vvod v ON v.id = d.vvodid join usl u on v.uslid = u.id " +
+                    $"WHERE r1.datestart >= d.Datestart " +
+                    $"AND r1.DateEnd <= d.Dateend) as t2 " +
+                    $"GROUP BY t2.name, t2.Type_water";
                 SqlCommand command = new SqlCommand(request_to_db, conn);
                 reader = command.ExecuteReader();
                 if (reader.HasRows == true)
@@ -172,11 +184,8 @@ namespace WpfApp1.Model
                     {
                         res.Add(new Result_uslugi()
                         {
-                            Id = reader.GetInt32(0),
-                            Name = reader.GetString(1),
-                            Datestart = reader.GetString(2),
-                            Dateend = reader.GetString(3),
-                           // Span = reader.GetInt32(4)
+                            Name = reader.GetString(0),
+                            Id = reader.GetInt32(1),
                         });
                     }
                     return res;

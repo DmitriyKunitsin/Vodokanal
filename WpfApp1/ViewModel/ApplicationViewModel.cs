@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using WpfApp1.Model;
 using WpfApp1.Model.Date;
 using WpfApp1.View;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfApp1.ViewModel
 {
@@ -141,7 +142,7 @@ namespace WpfApp1.ViewModel
                         }
                         if ( _usl.Id == 3)
                         {
-                            MessageBox.Show("Функционал еще не подвезли");
+                            worker.Table_date();
                         }
                     }
                     catch(Exception ex)
