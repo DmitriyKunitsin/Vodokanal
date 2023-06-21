@@ -1,0 +1,39 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:model="clr-namespace:WpfApp1.Model"
+        xmlns:viewmodel="clr-namespace:WpfApp1.ViewModel"
+        d:DataContext="{d:DesignInstance Type=model:NotificationObject}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <viewmodel:ApplicationViewModel x:Key="vm"></viewmodel:ApplicationViewModel>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid HorizontalAlignment="Center" Grid.Row="0">
+            <StackPanel DataContext="{Binding Source={StaticResource vm}}"  Width="250" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Выберите услугу для расчета" FontSize="18"/>
+                <ComboBox Height="30"
+                    SelectedIndex="0" Margin="5 5 5 10" SelectedItem="{Binding Path=SUsl}" ItemsSource="{Binding Path=usl}" DisplayMemberPath="Name">
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1"  DataContext="{Binding Source={StaticResource vm}}">
+            <TextBlock Text="{Binding SUsl.Name}" Width="200" Height="50"/>
+            <Grid Height="175" VerticalAlignment="Bottom" Margin="0 0 0 5">
+
+                <Button Command="{Binding TabbFirstComboBoxElelment}" FontSize="32" 
+                        CommandParameter="{Binding ElementName=resultList, Path=SelectedItem}"
+                        Content="Расчитать услугу" Width="475" Height="125" HorizontalAlignment="Center" Margin="10 0 0 10"/>
+            </Grid
+                  >
+        </Grid>
+    </Grid>
+</Window>
